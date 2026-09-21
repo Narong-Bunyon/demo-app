@@ -1,0 +1,58 @@
+name: demo-app-vault
+
+services:
+  # Laravel Application Container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo_app_laravel
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: "Book Vault"
+      APP_ENV: "local"
+      APP_DEBUG: "true"
+      APP_URL: "http://localhost:8000"
+      DB_CONNECTION: "mysql"
+      DB_HOST: "db"
+      DB_PORT: "3306"
+      DB_DATABASE: "demo_app"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "root"
+      SESSION_DRIVER: "database"
+      QUEUE_CONNECTION: "sync"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - demo_network
+
+  # MySQL 8.0 Database Container
+  db:
+    image: mysql:8.0
+    container_name: demo_app_db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: "demo_app"
+      MYSQL_ROOT_PASSWORD: "root"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - demo_network
+
+networks:
+  demo_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
