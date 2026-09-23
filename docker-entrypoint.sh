@@ -36,6 +36,11 @@ if [ "$DB_CONNECTION" = "mysql" ] && [ -n "$DB_HOST" ]; then
     echo "✅ MySQL server is reachable!"
 fi
 
+# Clear caches to ensure we are using the latest environment variables
+echo "🧹 Clearing configuration and application caches..."
+php artisan config:clear
+php artisan cache:clear
+
 # Run database migrations and seeders
 echo "📦 Running database migrations..."
 php artisan migrate --force
