@@ -19,6 +19,13 @@ fi
 echo "🔒 Setting permissions for storage and bootstrap/cache..."
 chmod -R 777 storage bootstrap/cache
 
+# Ensure database file exists for SQLite
+echo "🗄️ Ensuring SQLite database file exists..."
+mkdir -p database
+touch database/database.sqlite
+chmod 777 database
+chmod 666 database/database.sqlite
+
 # Wait for database connection if DB_HOST is set
 if [ "$DB_CONNECTION" = "mysql" ] && [ -n "$DB_HOST" ]; then
     echo "⏳ Waiting for MySQL database at $DB_HOST:$DB_PORT to be ready..."
