@@ -9,6 +9,9 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
+# Ensure .env is using mysql to match docker-compose
+sed -i 's/DB_CONNECTION=sqlite/DB_CONNECTION=mysql/g' .env
+
 # Ensure APP_KEY is set
 if ! grep -q "^APP_KEY=base64:" .env; then
     echo "🔑 Generating Application Key..."
